@@ -1,0 +1,598 @@
+{
+	"info": {
+		"_postman_id": "e629009b-a145-4c74-a619-af2f8c7597c7",
+		"name": "MELI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "341893"
+	},
+	"item": [
+		{
+			"name": "Sites",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/sites",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"sites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Categories",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/sites/{{DEFAULT_SITE_ID}}/categories",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"sites",
+						"{{DEFAULT_SITE_ID}}",
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Categories ATTR",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/categories/{{QIUBO_CATEGORY}}/attributes",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"categories",
+						"{{QIUBO_CATEGORY}}",
+						"attributes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authentication",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "content-type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{APP_ID}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{CLIENT_SECRET}}",
+							"type": "text"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://qiubo-sales.web.app/",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "{{CODE}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/oauth/token",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \\\n-H 'accept: application/json' \\\n-H 'content-type: application/x-www-form-urlencoded' \\\n'https://api.mercadolibre.com/oauth/token' \\\n-d 'grant_type=authorization_code' \\\n-d 'client_id=$APP_ID' \\\n-d 'client_secret=$SECRET_KEY' \\\n-d 'code=$SERVER_GENERATED_AUTHORIZATION_CODE' \\\n-d 'redirect_uri=$REDIRECT_URI' \\\n-d 'code_verifier=$CODE_VERIFIER' "
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "content-type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{APP_ID}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{CLIENT_SECRET}}",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{REFRESH_TOKEN}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/oauth/token",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \\\n-H 'accept: application/json' \\\n-H 'content-type: application/x-www-form-urlencoded' \\\n'https://api.mercadolibre.com/oauth/token' \\\n-d 'grant_type=refresh_token' \\\n-d 'client_id=$APP_ID' \\\n-d 'client_secret=$SECRET_KEY' \\\n-d 'refresh_token=$REFRESH_TOKEN'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/sites/{{DEFAULT_SITE_ID}}/search?q=SAMSUNG",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"sites",
+						"{{DEFAULT_SITE_ID}}",
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "SAMSUNG"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Me",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/users/me",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-a4eb2d95f4f59f19627a0a5fc1a60d92-279586572'  https://api.mercadolibre.com/users/me"
+			},
+			"response": []
+		},
+		{
+			"name": "Search by UserId",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/users/{{QIUBO_ID}}/items/search",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users",
+						"{{QIUBO_ID}}",
+						"items",
+						"search"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "Search by UserId SCAN",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/users/{{QIUBO_ID}}/items/search?search_type=scan",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users",
+						"{{QIUBO_ID}}",
+						"items",
+						"search"
+					],
+					"query": [
+						{
+							"key": "search_type",
+							"value": "scan"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "Search by nickname",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/sites/{{DEFAULT_SITE_ID}}/search?nickname=QIUBO3d",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"sites",
+						"{{DEFAULT_SITE_ID}}",
+						"search"
+					],
+					"query": [
+						{
+							"key": "nickname",
+							"value": "QIUBO3d"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "Search by Seller ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/sites/{{DEFAULT_SITE_ID}}/search?seller_id=1683175520",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"sites",
+						"{{DEFAULT_SITE_ID}}",
+						"search"
+					],
+					"query": [
+						{
+							"key": "seller_id",
+							"value": "1683175520"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "Search by Seller ID and CATEGORY",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/sites/{{DEFAULT_SITE_ID}}/search?seller_id=1683175520&category={{QIUBO_CATEGORY}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"sites",
+						"{{DEFAULT_SITE_ID}}",
+						"search"
+					],
+					"query": [
+						{
+							"key": "seller_id",
+							"value": "1683175520"
+						},
+						{
+							"key": "category",
+							"value": "{{QIUBO_CATEGORY}}"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "GET ITEMS",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/items?ids=MLA2017715060,MLA1979193484",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"items"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "MLA2017715060,MLA1979193484"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "GET ITEMS + ATTRIBUTES",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/items?ids=MLA2017715060,MLA1979193484&attributes=MANUFACTURER,BRAND",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"items"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "MLA2017715060,MLA1979193484"
+						},
+						{
+							"key": "attributes",
+							"value": "MANUFACTURER,BRAND"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "GET USERS",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/users?ids=1683175520",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "1683175520"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer APP_USR-976703753540619-041015-ef1e6e1ce63f92d5c2fee2f5e35f02f2-1683175520' https://api.mercadolibre.com/users/1683175520/items/search"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Test User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					},
+					{
+						"key": "Content-type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \t\"site_id\":\"MLA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/users/test_user",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users",
+						"test_user"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST -H 'Authorization: Bearer $ACCESS_TOKEN' -H \"Content-type: application/json\" -d \n'{\n   \t\"site_id\":\"MLA\"\n}' \n'https://api.mercadolibre.com/users/test_user'"
+			},
+			"response": []
+		},
+		{
+			"name": "https://api.mercadolibre.com/users/$USER_ID/items/search",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "https://api.mercadolibre.com/users/{{QIUBO_ID}}/items/search?q=kuromi",
+					"protocol": "https",
+					"host": [
+						"api",
+						"mercadolibre",
+						"com"
+					],
+					"path": [
+						"users",
+						"{{QIUBO_ID}}",
+						"items",
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "kuromi"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' https://api.mercadolibre.com/users/$USER_ID/items/search\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Search Categories",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/sites/{{DEFAULT_SITE_ID}}/domain_discovery/search?limit=8&q=celular%20iphone",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"sites",
+						"{{DEFAULT_SITE_ID}}",
+						"domain_discovery",
+						"search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "8"
+						},
+						{
+							"key": "q",
+							"value": "celular%20iphone"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN'  https://api.mercadolibre.com/sites/MLA/domain_discovery/search?limit=1&q=celular%20iphone\n"
+			},
+			"response": []
+		}
+	]
+}
