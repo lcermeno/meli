@@ -12,5 +12,4 @@ interface DashboardStateProvider {
     val searchQuery: StateFlow<String>
     fun updateSearchQuery(query: String)
     fun clearUiState()
-    fun retry()
 }
