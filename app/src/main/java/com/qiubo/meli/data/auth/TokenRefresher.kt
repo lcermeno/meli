@@ -16,7 +16,7 @@ class TokenRefresher @Inject constructor(
     suspend fun getAccessToken(code: String) {
         return try {
             val response = authApi.getAccessToken(
-                grantType = "authorization_code",
+                grantType = AUTHORIZATION_CODE_KEY,
                 clientId = BuildConfig.APP_ID,
                 clientSecret = BuildConfig.CLIENT_SECRET,
                 code = code,
@@ -33,7 +33,7 @@ class TokenRefresher @Inject constructor(
 
         return@runBlocking try {
             val response = authApi.refreshToken(
-                grantType = "refresh_token",
+                grantType = REFRESH_TOKEN_KEY,
                 clientId = BuildConfig.APP_ID,
                 clientSecret = BuildConfig.CLIENT_SECRET,
                 refreshToken = refreshToken
@@ -43,5 +43,10 @@ class TokenRefresher @Inject constructor(
         } catch (e: Exception) {
             null
         }
+    }
+
+    companion object {
+        private const val REFRESH_TOKEN_KEY = "refresh_token"
+        private const val AUTHORIZATION_CODE_KEY = "authorization_code"
     }
 }
