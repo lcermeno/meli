@@ -3,11 +3,11 @@ package com.qiubo.meli.data.repository.product
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.qiubo.meli.data.remote.ProductApi
-import com.qiubo.meli.model.ItemDetail
+import com.qiubo.meli.data.remote.model.ItemDetail
 
 class ProductPagingSource(
     private val api: ProductApi,
-    private val userId: String,
+    private val userId: Long,
 ) : PagingSource<Int, ItemDetail>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ItemDetail> {

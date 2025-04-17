@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.qiubo.meli.common.UiFeedback
+import com.qiubo.meli.ui.compose.components.ApplyStatusBarStyle
 
 @Composable
 fun ProductScreen(
@@ -35,6 +36,8 @@ fun ProductScreen(
     val uiFeedback = stateProvider.uiFeedback.collectAsState().value
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+
+    ApplyStatusBarStyle()
 
     LaunchedEffect(uiFeedback) {
         when (uiFeedback) {

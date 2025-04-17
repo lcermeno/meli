@@ -6,7 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.qiubo.meli.data.remote.ProductApi
 import com.qiubo.meli.domain.repository.ProductRepository
-import com.qiubo.meli.model.ItemDetail
+import com.qiubo.meli.data.remote.model.ItemDetail
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ class ProductRepositoryImpl @Inject constructor(
     private val api: ProductApi
 ) : ProductRepository {
 
-    override suspend fun getUserItemsWithDetails(userId: String): Flow<PagingData<ItemDetail>> {
+    override suspend fun getUserItemsWithDetails(userId: Long): Flow<PagingData<ItemDetail>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,

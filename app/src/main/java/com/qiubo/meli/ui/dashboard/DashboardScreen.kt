@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -28,7 +29,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -42,11 +42,10 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.qiubo.meli.R
 import com.qiubo.meli.common.UiFeedback
+import com.qiubo.meli.ui.compose.components.ApplyStatusBarStyle
 import com.qiubo.meli.ui.model.ProductViewData
-import com.qiubo.meli.ui.theme.YellowML
 
 @Composable
 fun DashboardScreen(
@@ -67,31 +66,21 @@ fun DashboardScreen(
             is UiFeedback.Error -> {
                 snackbarHostState.showSnackbar(context.getString(state.message))
             }
+
             is UiFeedback.Feedback -> {
                 snackbarHostState.showSnackbar(context.getString(state.message))
                 stateProvider.clearUiState()
             }
+
             else -> Unit
         }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = modifier.fillMaxSize()) {
-            SearchView(searchQuery, stateProvider)
 
-            when {
-                items.loadState.refresh is LoadState.Loading && uiState !is UiFeedback.Error -> {
-                    MessageView(R.string.loading)
-                }
-                uiState is UiFeedback.Error || items.loadState.refresh is LoadState.Error -> {
-                    RetryView {
-                        items.retry()
-                    }
-                }
-                items.loadState.refresh is LoadState.NotLoading -> {
-                    ProductList(items, navigateToProduct)
-                }
-            }
+            SearchView(searchQuery, stateProvider)
+            ContentView(items, uiState, navigateToProduct) { stateProvider.retry() }
         }
 
         SnackbarHost(
@@ -105,6 +94,33 @@ fun DashboardScreen(
         )
     }
 }
+
+@Composable
+private fun ContentView(
+    items: LazyPagingItems<DashboardUiItem>,
+    uiState: UiFeedback,
+    navigateToProduct: (String) -> Unit,
+    onRetry: () -> Unit,
+) {
+    val loadState = items.loadState.refresh
+    val isLoading = loadState is LoadState.Loading && uiState !is UiFeedback.Error
+    val isError = loadState is LoadState.Error || uiState is UiFeedback.Error
+
+    Progress(isLoading)
+
+    when {
+        isError -> {
+            RetryView {
+                onRetry()
+            }
+        }
+
+        loadState is LoadState.NotLoading -> {
+            ProductList(items, navigateToProduct)
+        }
+    }
+}
+
 
 @Composable
 private fun SearchView(
@@ -219,16 +235,19 @@ fun RetryView(
 }
 
 @Composable
-@Suppress("DEPRECATION")
-fun ApplyStatusBarStyle() {
-    val systemUiController = rememberSystemUiController()
-    val useDarkIcons = true
-    val backgroundColor = YellowML
-
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = backgroundColor,
-            darkIcons = useDarkIcons
-        )
+fun Progress(show: Boolean) {
+    if (show) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = 4.dp
+            )
+        }
     }
 }
+
