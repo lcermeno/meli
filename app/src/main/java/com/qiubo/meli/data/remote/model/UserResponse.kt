@@ -1,4 +1,4 @@
-package com.qiubo.meli.model
+package com.qiubo.meli.data.remote.model
 
 
 import com.squareup.moshi.JsonClass

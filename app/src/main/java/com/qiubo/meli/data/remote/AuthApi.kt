@@ -1,7 +1,7 @@
 package com.qiubo.meli.data.remote
 
 
-import com.qiubo.meli.model.TokenResponse
+import com.qiubo.meli.data.remote.model.TokenResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
