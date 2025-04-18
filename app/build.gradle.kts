@@ -69,7 +69,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.androidx.browser)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.compose.foundation)
 
     // Compose tooling
     debugImplementation(libs.androidx.ui.tooling)

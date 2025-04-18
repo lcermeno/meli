@@ -19,19 +19,39 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,10 +66,13 @@ import com.qiubo.meli.R
 import com.qiubo.meli.common.UiFeedback
 import com.qiubo.meli.ui.compose.components.ApplyStatusBarStyle
 import com.qiubo.meli.ui.model.ProductViewData
+import kotlinx.coroutines.launch
+import androidx.compose.material3.rememberDrawerState
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    modifier: Modifier = Modifier,
     stateProvider: DashboardStateProvider,
     navigateToProduct: (String) -> Unit
 ) {
@@ -58,6 +81,10 @@ fun DashboardScreen(
     val uiState by stateProvider.uiState.collectAsState()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val username by stateProvider.username.collectAsState()
+
 
     ApplyStatusBarStyle()
 
@@ -76,22 +103,58 @@ fun DashboardScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = modifier.fillMaxSize()) {
-
-            SearchView(searchQuery, stateProvider)
-            ContentView(items, uiState, navigateToProduct) { stateProvider.retry() }
-        }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(
-                    bottom = WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding() + 8.dp
+    DashboardDrawer(
+        username = username,
+        onLogout = { scope.launch { stateProvider.logout() } },
+        drawerState = drawerState
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.app_name)) },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            scope.launch { drawerState.open() }
+                        }) {
+                            Icon(
+                                Icons.Default.Menu,
+                                contentDescription = stringResource(R.string.menu)
+                            )
+                        }
+                    }
                 )
-        )
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier
+                        .padding(
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + 8.dp
+                        )
+                )
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding(),
+                    start = 0.dp,
+                    end = 0.dp
+                )
+            ) {
+                SearchView(searchQuery, stateProvider)
+                ContentView(
+                    items = items,
+                    uiState = uiState,
+                    navigateToProduct = navigateToProduct,
+                    onRetry = { stateProvider.retry() },
+                    onRefresh = { stateProvider.refresh() })
+            }
+        }
     }
 }
 
@@ -101,10 +164,12 @@ private fun ContentView(
     uiState: UiFeedback,
     navigateToProduct: (String) -> Unit,
     onRetry: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     val loadState = items.loadState.refresh
     val isLoading = loadState is LoadState.Loading && uiState !is UiFeedback.Error
     val isError = loadState is LoadState.Error || uiState is UiFeedback.Error
+    val isRefreshing = uiState is UiFeedback.Loading
 
     Progress(isLoading)
 
@@ -116,7 +181,7 @@ private fun ContentView(
         }
 
         loadState is LoadState.NotLoading -> {
-            ProductList(items, navigateToProduct)
+            ProductList(items, navigateToProduct, onRefresh, isRefreshing)
         }
     }
 }
@@ -134,7 +199,7 @@ private fun SearchView(
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(0.dp)
             )
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         OutlinedTextField(
             value = searchQuery,
@@ -144,7 +209,6 @@ private fun SearchView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                     bottom = 16.dp
                 ),
             colors = OutlinedTextFieldDefaults.colors(
@@ -156,24 +220,48 @@ private fun SearchView(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ProductList(
     items: LazyPagingItems<DashboardUiItem>,
-    navigateToProduct: (String) -> Unit
+    navigateToProduct: (String) -> Unit,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = onRefresh
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
     ) {
-        items(items.itemCount) { index ->
-            items[index]?.let { item ->
-                when (item) {
-                    is DashboardUiItem.ProductItem -> ProductView(navigateToProduct, item.product)
-                    is DashboardUiItem.MessageItem -> MessageView(item.message)
+
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(items.itemCount) { index ->
+                items[index]?.let { item ->
+                    when (item) {
+                        is DashboardUiItem.ProductItem -> ProductView(
+                            navigateToProduct,
+                            item.product
+                        )
+
+                        is DashboardUiItem.MessageItem -> MessageView(item.message)
+                    }
                 }
             }
         }
+
+        PullRefreshIndicator(
+            refreshing = isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
+
 
 @Composable
 private fun ProductView(
@@ -251,3 +339,44 @@ fun Progress(show: Boolean) {
     }
 }
 
+@Composable
+fun DashboardDrawer(
+    username: String,
+    onLogout: () -> Unit,
+    drawerState: DrawerState,
+    content: @Composable () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    text = username,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+                NavigationDrawerItem(
+                    label = { Text(text = stringResource(R.string.logout)) },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            onLogout()
+                            drawerState.close()
+                        }
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = stringResource(R.string.logout)
+                        )
+                    },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+            }
+        },
+        content = content
+    )
+}

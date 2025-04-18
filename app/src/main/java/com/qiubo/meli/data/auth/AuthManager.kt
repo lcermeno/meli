@@ -36,7 +36,7 @@ class AuthManager @Inject constructor(
         _accessTokenFlow.value = authPreferences.getAccessToken()
     }
 
-    suspend fun logout() {
+    override suspend fun logout() {
         _accessTokenFlow.value = null
         authPreferences.clearTokens()
     }

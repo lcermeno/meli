@@ -9,28 +9,34 @@ import androidx.paging.insertSeparators
 import androidx.paging.map
 import com.qiubo.meli.R
 import com.qiubo.meli.common.UiFeedback
+import com.qiubo.meli.data.auth.AuthTokenProvider
 import com.qiubo.meli.data.remote.model.ItemDetail
 import com.qiubo.meli.domain.repository.ProductRepository
 import com.qiubo.meli.domain.repository.UserRepository
 import com.qiubo.meli.ui.model.ProductViewData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val authManager: AuthTokenProvider
 ) : ViewModel(), DashboardStateProvider {
 
     private val _searchQuery = MutableStateFlow("")
@@ -39,14 +45,22 @@ class DashboardViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiFeedback>(UiFeedback.Idle)
     override val uiState: StateFlow<UiFeedback> = _uiState.asStateFlow()
 
+    private val _username = MutableStateFlow("")
+
+    override val username: StateFlow<String> = _username.asStateFlow()
+
     private val pagingEventFlow = MutableSharedFlow<PagingEvent>(extraBufferCapacity = 1)
 
     override fun retry() {
         pagingEventFlow.tryEmit(PagingEvent.RETRY)
     }
 
-    fun refresh() {
+    override fun refresh() {
         pagingEventFlow.tryEmit(PagingEvent.REFRESH)
+    }
+
+    override fun logout() {
+        viewModelScope.launch { authManager.logout() }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -56,8 +70,10 @@ class DashboardViewModel @Inject constructor(
             flow {
                 try {
                     clearUiState()
-                    val userId = userRepository.getCurrentUser().id
-                    val pagingData = productRepository.getUserItemsWithDetails(userId).cachedIn(viewModelScope)
+                    val user = userRepository.getCurrentUser()
+                    _username.value = user.nickname
+                    val pagingData =
+                        productRepository.getUserItemsWithDetails(user.id).cachedIn(viewModelScope)
                     emitAll(pagingData)
                 } catch (e: Exception) {
                     _uiState.value = UiFeedback.Error(R.string.dashboard_loading_error)
@@ -73,8 +89,13 @@ class DashboardViewModel @Inject constructor(
         _uiState.value = UiFeedback.Idle
     }
 
+    @OptIn(FlowPreview::class)
     override val pagedProducts: Flow<PagingData<DashboardUiItem>> =
-        combine(pagingFlow, _searchQuery) { pagingData, query ->
+        combine(
+            pagingFlow, _searchQuery
+                .debounce(300)
+                .distinctUntilChanged()
+        ) { pagingData, query ->
             val filtered = if (query.isBlank()) {
                 pagingData
             } else {

@@ -41,7 +41,6 @@ fun NavGraphBuilder.dashboardScreenNavigation(
     composable<Route.Dashboard> {
         val viewModel = hiltViewModel<DashboardViewModel>()
         DashboardScreen(
-            modifier = Modifier.padding(innerPadding),
             stateProvider = viewModel,
             navigateToProduct = onNavigateToProduct
         )

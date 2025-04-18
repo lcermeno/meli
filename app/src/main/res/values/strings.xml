@@ -12,5 +12,7 @@
     <string name="dashboard_loading_error">We couldn’t load your products. Please try again.</string>
     <string name="product_loading_error">Couldn’t load this product. Try again later.</string>
     <string name="retry">Try again</string>
+    <string name="logout">Log out</string>
+    <string name="menu">Menu</string>
 
 </resources>
