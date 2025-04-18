@@ -14,7 +14,7 @@ import com.qiubo.meli.ui.product.ProductScreen
 import com.qiubo.meli.ui.product.ProductViewModel
 import com.qiubo.meli.ui.splash.SplashScreen
 
-fun NavGraphBuilder.loadingScreenNavigation(
+fun NavGraphBuilder.splashScreenNavigation(
     innerPadding: PaddingValues,
 ) {
     composable<Route.Splash> {
@@ -35,7 +35,6 @@ fun NavGraphBuilder.loginScreenNavigation(
 }
 
 fun NavGraphBuilder.dashboardScreenNavigation(
-    innerPadding: PaddingValues,
     onNavigateToProduct: (String) -> Unit
 ) {
     composable<Route.Dashboard> {

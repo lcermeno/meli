@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.qiubo.meli.common.UiFeedback
 import com.qiubo.meli.routes.Route
 import com.qiubo.meli.ui.navigation.dashboardScreenNavigation
-import com.qiubo.meli.ui.navigation.loadingScreenNavigation
+import com.qiubo.meli.ui.navigation.splashScreenNavigation
 import com.qiubo.meli.ui.navigation.loginScreenNavigation
 import com.qiubo.meli.ui.navigation.productScreenNavigation
 import com.qiubo.meli.ui.theme.MeliTheme
@@ -76,9 +76,9 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = Route.Splash
                     ) {
-                        loadingScreenNavigation(innerPadding)
+                        splashScreenNavigation(innerPadding)
                         loginScreenNavigation(innerPadding)
-                        dashboardScreenNavigation(innerPadding) { productId ->
+                        dashboardScreenNavigation { productId ->
                             navController.navigate(
                                 Route.Product(
                                     productId = productId
