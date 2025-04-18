@@ -32,7 +32,6 @@ class AuthManager @Inject constructor(
     override suspend fun getAccessToken(): String? = _accessTokenFlow.first()
 
     override suspend fun loadTokenIntoMemory() {
-        //        authPreferences.preloadTokensForTesting()
         _accessTokenFlow.value = authPreferences.getAccessToken()
     }
 
