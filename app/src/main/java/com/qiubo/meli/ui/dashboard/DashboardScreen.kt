@@ -327,7 +327,7 @@ fun Progress(show: Boolean) {
     if (show) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(32.dp),
             contentAlignment = Alignment.Center
         ) {
