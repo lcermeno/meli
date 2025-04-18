@@ -17,7 +17,7 @@ class Authenticator @Inject constructor(
 
         return newToken?.let {
             response.request.newBuilder()
-                .header("Authorization", "Bearer $it")
+                .header(AUTHORIZATION_KEY, "Bearer $it")
                 .build()
         }
     }
@@ -31,5 +31,10 @@ class Authenticator @Inject constructor(
         }
         return count
     }
+
+    companion object {
+        private const val AUTHORIZATION_KEY = "Authorization"
+    }
+
 }
 

@@ -9,5 +9,4 @@ interface AuthTokenProvider {
     suspend fun getAccessToken(): String?
     suspend fun loadTokenIntoMemory()
     suspend fun logout()
-
 }

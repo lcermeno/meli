@@ -17,9 +17,13 @@ class AuthInterceptor @Inject constructor(
         }
 
         token?.takeIf { it.isNotBlank() }?.let {
-            requestBuilder.addHeader("Authorization", "Bearer $it")
+            requestBuilder.addHeader(AUTHORIZATION_KEY, "Bearer $it")
         }
 
         return chain.proceed(requestBuilder.build())
+    }
+
+    companion object {
+        private const val AUTHORIZATION_KEY = "Authorization"
     }
 }
