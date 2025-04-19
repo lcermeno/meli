@@ -1,6 +1,10 @@
 package com.qiubo.meli.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.qiubo.meli.BuildConfig
 import com.qiubo.meli.data.auth.AuthInterceptor
 import com.qiubo.meli.data.auth.AuthManager
@@ -102,11 +106,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthPreferences(@ApplicationContext context: Context): AuthPreferences =
-        AuthPreferences(context)
-
-    @Provides
-    @Singleton
     fun provideIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 
     @Provides
@@ -140,6 +139,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(api: UserApi): UserRepository =
-        UserRepositoryImpl(api)
+    fun provideUserRepository(api: UserApi, authPreferences: AuthPreferences): UserRepository =
+        UserRepositoryImpl(api, authPreferences)
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("auth_prefs") }
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthPreferences(dataStore: DataStore<Preferences>): AuthPreferences {
+        return AuthPreferences(dataStore)
+    }
 }

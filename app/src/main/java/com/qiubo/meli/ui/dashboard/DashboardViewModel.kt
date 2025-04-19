@@ -1,5 +1,6 @@
 package com.qiubo.meli.ui.dashboard
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -49,7 +50,8 @@ class DashboardViewModel @Inject constructor(
 
     override val username: StateFlow<String> = _username.asStateFlow()
 
-    private val pagingEventFlow = MutableSharedFlow<PagingEvent>(extraBufferCapacity = 1)
+    @VisibleForTesting
+    val pagingEventFlow = MutableSharedFlow<PagingEvent>(extraBufferCapacity = 1)
 
     override fun retry() {
         pagingEventFlow.tryEmit(PagingEvent.RETRY)
@@ -130,5 +132,4 @@ class DashboardViewModel @Inject constructor(
         RETRY,
         REFRESH
     }
-
 }

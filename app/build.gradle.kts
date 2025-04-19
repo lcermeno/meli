@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.compose.foundation)
+    implementation(libs.core.ktx)
+    testImplementation(libs.jupiter.junit.jupiter)
 
     // Compose tooling
     debugImplementation(libs.androidx.ui.tooling)
@@ -117,9 +119,20 @@ dependencies {
     // Tests
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
+    testImplementation(libs.junit5.api)
     testImplementation(libs.turbine)
+    testRuntimeOnly(libs.junit5.engine)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(kotlin("test"))
+
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

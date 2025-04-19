@@ -27,11 +27,16 @@ datastore = "1.1.4"
 serialization = "1.6.3"
 
 mockk = "1.13.10"
-turbine = "1.1.0"
 timber = "5.0.1"
 coil = "2.5.0"
 paging = "3.3.6"
 accompanist = "0.34.0"
+junitJupiter = "5.11.4"
+junit5-api = "org.junit.jupiter:junit-jupiter-api:5.11.4"
+junit5-engine = "org.junit.jupiter:junit-jupiter-engine:5.11.4"
+coroutines-test = "1.10.1"
+coreKtxVersion = "1.6.1"
+turbine = "1.1.0"
 
 [libraries]
 # Core
@@ -42,6 +47,9 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+junit5-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5-api" }
+junit5-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5-engine" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 # Logging
@@ -99,6 +107,8 @@ androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", 
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+jupiter-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
